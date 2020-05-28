@@ -71,13 +71,16 @@ if __name__ == '__main__':
     subreddit = reddit.subreddit(SUBREDDIT)
 
     new_tags = get_tags(START_TAG, END_TAG, subreddit)
-    current_leaderboard = leaderboard.read_existing_leaderboard(subreddit, PHOTOTAG_WIKI)
+    current_leaderboard_tags = leaderboard.read_existing_leaderboard_tags(subreddit, PHOTOTAG_WIKI)
 
-    all_tags = {**new_tags, **current_leaderboard}
+    all_tags = {**new_tags, **current_leaderboard_tags}
     updated_leaderboard = leaderboard.leaderboard(all_tags)
     sorted_leaderboard = leaderboard.sort_leaderboard(updated_leaderboard)
 
-    print(sorted_leaderboard)
+    for user, num_tags in sorted_leaderboard.items():
+        print(f'{str(num_tags)}\t{user}')
+
+    # TODO: start querying for tags where the leaderboard ends
 
     # TODO: check for missing tags
 
