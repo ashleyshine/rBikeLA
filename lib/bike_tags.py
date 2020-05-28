@@ -5,6 +5,9 @@ import praw
 
 import client
 import leaderboard
+import qa
+
+logging.getLogger().setLevel(logging.INFO)
 
 
 SUBREDDIT = 'bikeLA'
@@ -37,18 +40,17 @@ def get_tags(start, end, subreddit):
     """
     tags = {}
 
-    for n in range(start, end) :
+    for n in range(start, end):
         try:
             tags[n] = tag_user(subreddit, n)
-        except StopIteration as e:
-            logging.info(f'Unable to find tag for #{n}. Skipping')
+        except Exception as e:
+            logging.info(f'Unable to find tag for #{n}. Skipping.')
 
     return tags
 
 
 def tag_user(subreddit, tag):
     """Return info for a tag number.
-
     Params:
         subreddit: praw Subreddit instance
         tag: int
@@ -58,7 +60,7 @@ def tag_user(subreddit, tag):
     post = next(subreddit.search(tag_title))
     post_author = post.author.name
 
-    return post.author.name
+    return post_author
 
 
 def tag_str(num):
@@ -77,11 +79,13 @@ if __name__ == '__main__':
     updated_leaderboard = leaderboard.leaderboard(all_tags)
     sorted_leaderboard = leaderboard.sort_leaderboard(updated_leaderboard)
 
-    for user, num_tags in sorted_leaderboard.items():
-        print(f'{str(num_tags)}\t{user}')
+    n_tags_found = qa.total_tags_found(all_tags)
+    missing = qa.missing_tags(all_tags, END_TAG)
 
     # TODO: start querying for tags where the leaderboard ends
 
-    # TODO: check for missing tags
+    # TODO: handling for multiple tag posts found
+
+    # TODO: get tag urls
 
 
