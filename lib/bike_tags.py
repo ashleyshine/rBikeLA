@@ -4,8 +4,11 @@ import logging
 import praw
 
 import client
+import leaderboard
+
 
 SUBREDDIT = 'bikeLA'
+PHOTOTAG_WIKI = 'phototag'
 START_TAG = 291
 END_TAG = 388
 
@@ -67,5 +70,6 @@ if __name__ == '__main__':
     reddit = reddit_client(client_config)
     subreddit = reddit.subreddit(SUBREDDIT)
     tags = get_tags(START_TAG, END_TAG, subreddit)
-
+    current_leaderboard = leaderboard.read_existing_leaderboard(subreddit, PHOTOTAG_WIKI)
+    print(current_leaderboard)
 
