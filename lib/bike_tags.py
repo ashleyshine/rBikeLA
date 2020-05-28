@@ -39,7 +39,7 @@ def get_tags(start, end, subreddit):
 
     for n in range(start, end) :
         try:
-            tag[n] = tag_user(subreddit, n)
+            tags[n] = tag_user(subreddit, n)
         except StopIteration as e:
             logging.info(f'Unable to find tag for #{n}. Skipping')
 
@@ -69,7 +69,16 @@ if __name__ == '__main__':
     client_config = client.get_client_credentials()
     reddit = reddit_client(client_config)
     subreddit = reddit.subreddit(SUBREDDIT)
-    tags = get_tags(START_TAG, END_TAG, subreddit)
+
+    new_tags = get_tags(START_TAG, END_TAG, subreddit)
     current_leaderboard = leaderboard.read_existing_leaderboard(subreddit, PHOTOTAG_WIKI)
-    print(current_leaderboard)
+
+    all_tags = {**new_tags, **current_leaderboard}
+    updated_leaderboard = leaderboard.leaderboard(all_tags)
+    sorted_leaderboard = leaderboard.sort_leaderboard(updated_leaderboard)
+
+    print(sorted_leaderboard)
+
+    # TODO: check for missing tags
+
 
