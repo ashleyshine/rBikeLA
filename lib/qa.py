@@ -8,8 +8,7 @@ def missing_tags(tags, end_tag):
     found_tags = set(tags.keys())
     all_tags = set(range(1, end_tag))
 
-    print(sort(all_tags))
-    missing_tags = sort(list(all_tags - found_tags))
+    missing_tags = sorted(list(all_tags - found_tags))
 
     return missing_tags
 
@@ -22,6 +21,7 @@ def print_report(tags, end_tag):
     n_tags_found = total_tags_found(tags)
     missing = missing_tags(tags, end_tag)
 
+    print('===== QA Report =====')
     print(f'Total tags found: {n_tags_found}')
     print(f'Total missing tags: {len(missing)}')
     print(f'Missing tags: {missing}')

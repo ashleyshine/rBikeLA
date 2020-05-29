@@ -81,7 +81,7 @@ if __name__ == '__main__':
     all_tags = combine_tags(current_leaderboard_tags, new_tags)
 
     updated_leaderboard = leaderboard.leaderboard(all_tags)
-    sorted_leaderboard = leaderboard.sort_leaderboard(updated_leaderboard)
+    leaderboard.print_new_leaderboard(updated_leaderboard)
 
     qa.print_report(all_tags, args.current_tag)
 

@@ -55,15 +55,15 @@ def leaderboard(tags):
 
 
 def sort_leaderboard(leaderboard):
-    """Return leaderboard dict sorted in descending order of num_tags.
+    """Return leaderboard as list sorted in descending order of num_tags.
 
     Params:
         leaderboard: dict in form of {user: num_tags}
     """
-    sorted_leaderboard = {
-        user: num_tags for user, num_tags
+    sorted_leaderboard = [
+        {user: num_tags} for user, num_tags
         in sorted(leaderboard.items(), key=lambda item: item[1], reverse=True)
-    }
+    ]
 
     return sorted_leaderboard
 
@@ -106,7 +106,8 @@ def users_with_multiple_names(leaderboard):
 
 
 def all_user_names(leaderboard, user):
-    """Return list of all the usernames that appear for a given user in the leaderboard.
+    """Return list of all the usernames that appear for a given user
+        in the leaderboard.
 
     Params:
         leaderboard: dict in form of {user: num_tags}
@@ -116,7 +117,7 @@ def all_user_names(leaderboard, user):
 
 
 def name_to_keep(all_user_names, user):
-    """Return the username to keep for a user whose name appears multiple times (str).
+    """Return the username to keep for a user whose name appears multiple times.
         Prefers names that are not completely lowercase.
 
     Params:
@@ -140,7 +141,30 @@ def last_leaderboard_tag(tags):
     return max(tags.keys())
 
 
-def format_new_leaderboard(leaderboard):
-    # TODO: output Tag(link) - found by (link)
-    # Modify `get_tags` to return link to post
-    return None
+def print_new_leaderboard(leaderboard, top_n=10):
+    """Print top N leaderboard by number of tags found.
+
+    Params:
+        leaderboard: dict in form of {user: num_tags}
+        top_n: int
+    """
+    rank = 0
+    nth_user = 0
+    current_num_tags = float('inf')
+
+    sorted_leaderboard = sort_leaderboard(leaderboard)
+
+    while rank < top_n and nth_user < len(sorted_leaderboard):
+        user, n_tags = list(sorted_leaderboard[nth_user].items())[0]
+
+        print(format_leaderboard_line(rank, user, n_tags))
+
+        if current_num_tags > n_tags:
+            current_num_tags = n_tags
+            rank += 1
+
+        nth_user += 1
+
+
+def format_leaderboard_line(rank, user, n_tags):
+    return f'{rank + 1}) /u/{user} {n_tags}'
