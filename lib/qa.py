@@ -2,7 +2,7 @@ def missing_tags(tags, end_tag):
     """Return list of tags missing from tags found in subreddit.
 
     Params:
-        tags: dict in form of {tag: user}
+        tags: dict
         end_tag: number of last tag (int)
     """
     found_tags = set(tags.keys())

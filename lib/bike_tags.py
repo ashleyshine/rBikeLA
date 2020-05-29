@@ -16,7 +16,7 @@ END_TAG = 388
 
 
 def get_tags(start, end, subreddit):
-    """Return dict in format {tag: user}.
+    """Return dict in format {tag: tag_info}.
 
     Params:
         start: tag number (int)
@@ -27,14 +27,14 @@ def get_tags(start, end, subreddit):
 
     for n in range(start, end):
         try:
-            tags[n] = tag_user(subreddit, n)
+            tags[n] = tag_info(subreddit, n)
         except Exception as e:
             logging.info(f'Unable to find tag for #{n}. Skipping.')
 
     return tags
 
 
-def tag_user(subreddit, tag):
+def tag_info(subreddit, tag):
     """Return info for a tag number.
     Params:
         subreddit: praw Subreddit instance
@@ -49,9 +49,16 @@ def tag_user(subreddit, tag):
         raise Exception
     else:
         post = next(subreddit.search(tag_title))
-        post_author = post.author.name
+        post_info = {
+            'user': post.author.name,
+            'url': post.permalink
+        }
 
-    return post_author
+    return post_info
+
+
+def combine_tags(old_tags, new_tags):
+    return {**old_tags, **new_tags}
 
 
 def tag_str(num):
@@ -72,8 +79,8 @@ if __name__ == '__main__':
         start_tag = DEFAULT_START_TAG
 
     new_tags = get_tags(start_tag, args.current_tag, subreddit)
+    all_tags = combine_tags(current_leaderboard_tags, new_tags)
 
-    all_tags = {**new_tags, **current_leaderboard_tags}
     updated_leaderboard = leaderboard.leaderboard(all_tags)
     sorted_leaderboard = leaderboard.sort_leaderboard(updated_leaderboard)
 

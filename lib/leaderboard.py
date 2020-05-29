@@ -20,8 +20,9 @@ def read_existing_leaderboard_tags(subreddit, phototag_wiki):
         tag_line = match_tag_line(line)
         if tag_line:
             tag = tag_line.group(1)
-            user = tag_line.group(2)
-            tags[int(tag)] = user.strip('*\r')
+            url = tag_line.group(2)
+            user = tag_line.group(3)
+            tags[int(tag)] = {'user': user.strip('*\r'), 'url': url}
 
     return tags
 
@@ -32,18 +33,20 @@ def match_tag_line(line):
     Params:
         line: str
     """
-    return re.search(r'\[Tag #(\d+)\].*found by /u/(.*)', line)
+    return re.search(r'\[Tag #(\d+)\](\(http.*\)).*found by /u/(.*)', line)
 
 
 def leaderboard(tags):
     """Return dict in form of {user: num_tags}.
 
     Params:
-        tags: dict in form of {tag: user}
+        tags: dict
     """
     leaderboard = collections.defaultdict(int)
 
-    for user in tags.values():
+    users = [tag_info['user'] for tag_info in tags.values()]
+
+    for user in users:
         leaderboard[user] += 1
 
     leaderboard_with_users_combined = combine_identical_users(leaderboard)
