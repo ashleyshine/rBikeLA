@@ -2,7 +2,7 @@ import json
 
 import praw
 
-CLIENT_PATH = '../config/client'
+CLIENT_PATH = './config/client'
 
 
 def get_client_credentials():
@@ -19,9 +19,9 @@ def reddit_client(config):
         config: dict containing client info
     """
     client = praw.Reddit(
-        client_id = config['client_id'],
-        client_secret = config['client_secret'],
-        user_agent = config['user_agent']
+        client_id=config['client_id'],
+        client_secret=config['client_secret'],
+        user_agent=config['user_agent']
     )
 
     return client

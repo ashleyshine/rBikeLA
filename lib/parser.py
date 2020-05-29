@@ -1,7 +1,10 @@
 import argparse
 
+
 def parser():
-    parser = argparse.ArgumentParser(description="Update r/bikeLA bike tag leaderboard.")
+    parser = argparse.ArgumentParser(
+        description="Update r/bikeLA bike tag leaderboard."
+    )
 
     parser.add_argument(
         '--current_tag', '-c', help='Current tag in r/bikeLA',

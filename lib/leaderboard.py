@@ -1,8 +1,6 @@
 import collections
 import re
 
-import praw
-
 
 def read_existing_leaderboard_tags(subreddit, phototag_wiki):
     """Read the existing leaderboard in the phototag wiki.
@@ -96,7 +94,6 @@ def users_with_multiple_names(leaderboard):
         leaderboard: dict in form of {user: num_tags}
     """
     lowercase_users = [u.lower() for u in leaderboard.keys()]
-    user_counts = collections.Counter(lowercase_users)
     users_with_multiple_names = [
         user for user, count
         in collections.Counter(lowercase_users).items() if count > 1

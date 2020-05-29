@@ -1,5 +1,6 @@
-import re
+import json
 import logging
+import os
 
 import reddit
 import leaderboard
@@ -11,10 +12,12 @@ logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 SUBREDDIT = 'bikeLA'
 PHOTOTAG_WIKI = 'phototag'
+RESOURCE_DIR = './resources'
+OVERRIDE_FILES = ['conflicting_tags.json', 'missing_tags.json']
 DEFAULT_START_TAG = 1
 
 
-def get_tags(start, end, subreddit):
+def get_tags(start, end, subreddit, manual_overrides={}):
     """Return dict in format {tag: tag_info}.
 
     Params:
@@ -26,35 +29,77 @@ def get_tags(start, end, subreddit):
 
     for n in range(start, end):
         try:
-            tags[n] = tag_info(subreddit, n)
+            tags[n] = tag_info(subreddit, n, manual_overrides)
         except Exception as e:
             logging.info(f'Unable to find tag for #{n}. Skipping.')
 
     return tags
 
 
-def tag_info(subreddit, tag):
+def tag_info(subreddit, tag, manual_overrides={}):
     """Return info for a tag number.
     Params:
         subreddit: praw Subreddit instance
         tag: int
     """
     posts = subreddit.search(tag_str(tag))
-    tag_title = [p.title for p in posts if tag_str(tag) in p.title]
+    tag_titles = [p.title for p in posts if tag_str(tag) in p.title]
 
-    if len(tag_title) > 1:
-        logging.warning(f'More than one tag post found for {tag}. Skipping. Please resolve manually.')
-        logging.warning(f'Tag posts: {tag_title}')
+    # TODO: Refactor into own functions
+    multiple_posts_found = len(tag_titles) > 1
+    has_manual_override = tag in list(manual_overrides.keys())
+
+    if multiple_posts_found and has_manual_override:
+        logging.info(f'More than one post for #{tag}. Using manual override found in resources.')
+        post_info = get_tag_info_from_overrides(manual_overrides, tag)
+    elif multiple_posts_found:
+        logging.warning(
+            f'More than one post found for #{tag}. Skipping. ' +
+            'Please resolve manually and add to resource directory.'
+        )
+        logging.warning(f'Tag posts: {tag_titles}')
         raise Exception
     else:
-        post = next(subreddit.search(tag_title))
-        post_info = {
-            'user': post.author.name,
-            'url': post.permalink
-        }
+        try:
+            post_info = get_tag_info_from_post(tag_titles[0])
+        except Exception:
+            if tag in manual_overrides.keys():
+                logging.info('Unable to find post for #{tag}. Using manual override found in resources.')
+                post_info = get_tag_info_from_overrides(manual_overrides, tag)
 
     return post_info
 
+
+def get_tag_info_from_post(tag_title):
+    post = next(subreddit.search(tag_title))
+    post_info = {
+        'user': post.author.name,
+        'url': post.permalink
+    }
+
+    return post_info
+
+
+def read_manual_override_tags():
+    tags = {}
+
+    for file in OVERRIDE_FILES:
+        with open(os.path.join(RESOURCE_DIR, file)) as f:
+            tag_lines = [json.loads(line) for line in f.readlines()]
+
+        for tag in tag_lines:
+            tags[tag['tag']] = {'user': tag['user'], 'url': tag['url']}
+
+    return tags
+
+
+def get_tag_info_from_overrides(manual_overrides, tag):
+    tag_info = {
+        'user': manual_overrides[tag]['user'],
+        'url': manual_overrides[tag]['url']
+    }
+
+    return tag_info
 
 def combine_tags(old_tags, new_tags):
     return {**old_tags, **new_tags}
@@ -77,11 +122,14 @@ if __name__ == '__main__':
         current_leaderboard_tags = {}
         start_tag = DEFAULT_START_TAG
 
-    new_tags = get_tags(start_tag, args.current_tag, subreddit)
+    manual_override_tags = read_manual_override_tags()
+    new_tags = get_tags(start_tag, args.current_tag, subreddit, manual_override_tags)
+    # TODO: modify all_tags to read missing tags from file
     all_tags = combine_tags(current_leaderboard_tags, new_tags)
 
     updated_leaderboard = leaderboard.leaderboard(all_tags)
-    leaderboard.print_new_leaderboard(updated_leaderboard)
+    leaderboard.print_new_leaderboard(updated_leaderboard, 15)
+
+    # TODO: print found tags list
 
     qa.print_report(all_tags, args.current_tag)
-
