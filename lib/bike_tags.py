@@ -12,7 +12,6 @@ logging.getLogger().setLevel(logging.INFO)
 SUBREDDIT = 'bikeLA'
 PHOTOTAG_WIKI = 'phototag'
 DEFAULT_START_TAG = 1
-END_TAG = 388
 
 
 def get_tags(start, end, subreddit):
@@ -84,9 +83,5 @@ if __name__ == '__main__':
     updated_leaderboard = leaderboard.leaderboard(all_tags)
     sorted_leaderboard = leaderboard.sort_leaderboard(updated_leaderboard)
 
-    n_tags_found = qa.total_tags_found(all_tags)
-    missing = qa.missing_tags(all_tags, END_TAG)
-
-    # TODO: get tag urls
-
+    qa.print_report(all_tags, args.current_tag)
 
