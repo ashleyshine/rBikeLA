@@ -42,8 +42,14 @@ def tag_user(subreddit, tag):
     """
     posts = subreddit.search(tag_str(tag))
     tag_title = [p.title for p in posts if tag_str(tag) in p.title]
-    post = next(subreddit.search(tag_title))
-    post_author = post.author.name
+
+    if len(tag_title) > 1:
+        logging.warning(f'More than one tag post found for {tag}. Skipping. Please resolve manually.')
+        logging.warning(f'Tag posts: {tag_title}')
+        raise Exception
+    else:
+        post = next(subreddit.search(tag_title))
+        post_author = post.author.name
 
     return post_author
 
@@ -73,10 +79,6 @@ if __name__ == '__main__':
 
     n_tags_found = qa.total_tags_found(all_tags)
     missing = qa.missing_tags(all_tags, END_TAG)
-
-    # TODO: start querying for tags where the leaderboard ends
-
-    # TODO: handling for multiple tag posts found
 
     # TODO: get tag urls
 

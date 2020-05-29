@@ -6,7 +6,7 @@ def missing_tags(tags, end_tag):
         end_tag: number of last tag (int)
     """
     found_tags = set(tags.keys())
-    all_tags = set(range(1, eng_tag))
+    all_tags = set(range(1, end_tag))
     missing_tags = list(all_tags - found_tags)
 
     return missing_tags
