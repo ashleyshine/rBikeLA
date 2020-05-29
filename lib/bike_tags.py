@@ -6,7 +6,7 @@ import leaderboard
 import parser
 import qa
 
-logging.getLogger().setLevel(logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 
 SUBREDDIT = 'bikeLA'
