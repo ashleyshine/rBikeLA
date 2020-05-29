@@ -1,10 +1,9 @@
 import re
 import logging
 
-import praw
-
-import client
+import reddit
 import leaderboard
+import parser
 import qa
 
 logging.getLogger().setLevel(logging.INFO)
@@ -12,22 +11,8 @@ logging.getLogger().setLevel(logging.INFO)
 
 SUBREDDIT = 'bikeLA'
 PHOTOTAG_WIKI = 'phototag'
-START_TAG = 291
+DEFAULT_START_TAG = 1
 END_TAG = 388
-
-
-def reddit_client(config):
-    """Return praw Reddit instance.
-
-    Params:
-        config: dict containing client info
-    """
-    client = praw.Reddit(
-        client_id = config['client_id'],
-        client_secret = config['client_secret'],
-        user_agent = config['user_agent']
-    )
-    return client
 
 
 def get_tags(start, end, subreddit):
@@ -68,12 +53,19 @@ def tag_str(num):
 
 
 if __name__ == '__main__':
-    client_config = client.get_client_credentials()
-    reddit = reddit_client(client_config)
-    subreddit = reddit.subreddit(SUBREDDIT)
+    parser = parser.parser()
+    args = parser.parse_args()
 
-    new_tags = get_tags(START_TAG, END_TAG, subreddit)
-    current_leaderboard_tags = leaderboard.read_existing_leaderboard_tags(subreddit, PHOTOTAG_WIKI)
+    subreddit = reddit.get_subreddit(SUBREDDIT)
+
+    if args.use_leaderboard:
+        current_leaderboard_tags = leaderboard.read_existing_leaderboard_tags(subreddit, PHOTOTAG_WIKI)
+        start_tag = leaderboard.last_leaderboard_tag(current_leaderboard_tags)
+    else:
+        current_leaderboard_tags = {}
+        start_tag = DEFAULT_START_TAG
+
+    new_tags = get_tags(start_tag, args.current_tag, subreddit)
 
     all_tags = {**new_tags, **current_leaderboard_tags}
     updated_leaderboard = leaderboard.leaderboard(all_tags)

@@ -133,6 +133,10 @@ def names_to_drop(all_user_names, name_to_keep):
     return [n for n in all_user_names if n != name_to_keep]
 
 
+def last_leaderboard_tag(tags):
+    return max(tags.keys())
+
+
 def format_new_leaderboard(leaderboard):
     # TODO: output Tag(link) - found by (link)
     # Modify `get_tags` to return link to post
