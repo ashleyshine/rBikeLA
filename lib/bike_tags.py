@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
     subreddit = reddit.get_subreddit(SUBREDDIT)
 
-    if args.use_leaderboard:
+    if args.use_wiki:
         current_leaderboard_tags = leaderboard.read_existing_leaderboard_tags(subreddit, PHOTOTAG_WIKI)
         start_tag = leaderboard.last_leaderboard_tag(current_leaderboard_tags)
     else:
@@ -181,8 +181,9 @@ if __name__ == '__main__':
     all_tags = combine_tags(current_leaderboard_tags, new_tags)
 
     updated_leaderboard = leaderboard.leaderboard(all_tags)
-    leaderboard.print_new_leaderboard(updated_leaderboard)
+    leaderboard.print_new_leaderboard(updated_leaderboard, args.n_leaderboard)
     leaderboard.print_found_tags(all_tags)
 
-    qa.print_report(all_tags, args.current_tag)
+    if args.qa:
+        qa.print_report(all_tags, args.current_tag)
 

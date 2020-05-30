@@ -21,7 +21,7 @@ def print_report(tags, end_tag):
     n_tags_found = total_tags_found(tags)
     missing = missing_tags(tags, end_tag)
 
-    print('===== QA Report =====')
+    print('\n===== QA Report =====')
     print(f'Total tags found: {n_tags_found}')
     print(f'Total missing tags: {len(missing)}')
     print(f'Missing tags: {missing}')

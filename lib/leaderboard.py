@@ -149,7 +149,7 @@ def last_leaderboard_tag(tags):
     return max(tags.keys())
 
 
-def print_new_leaderboard(leaderboard, top_n=10):
+def print_new_leaderboard(leaderboard, top_n):
     """Print top N leaderboard by number of tags found.
 
     Params:
@@ -162,24 +162,28 @@ def print_new_leaderboard(leaderboard, top_n=10):
 
     sorted_leaderboard = sort_leaderboard(leaderboard)
 
+    print('# TAG LEADERBOARD\n')
+
     while rank < top_n and nth_user < len(sorted_leaderboard):
         user, n_tags = list(sorted_leaderboard[nth_user].items())[0]
-
-        print(format_leaderboard_line(rank, user, n_tags))
 
         if current_num_tags > n_tags:
             current_num_tags = n_tags
             rank += 1
 
+        print(format_leaderboard_line(rank, user, n_tags))
+
         nth_user += 1
 
 
 def format_leaderboard_line(rank, user, n_tags):
-    return f'{rank + 1}) /u/{user} {n_tags} tags'
+    return f'{rank}) /u/{user} {n_tags} tags'
 
 
 def print_found_tags(tags):
     tag_numbers = sorted(tags.keys())
+
+    print('\n# Found tags!\n')
 
     for n in tag_numbers[:-1]:
         url = tags[n]['url']
