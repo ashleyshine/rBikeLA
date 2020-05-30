@@ -42,17 +42,14 @@ def tag_info(subreddit, tag, manual_overrides={}):
         subreddit: praw Subreddit instance
         tag: int
     """
-    posts = subreddit.search(tag_str(tag))
-    tag_titles = [p.title for p in posts if tag_str(tag) in p.title]
+    tag_titles = get_tag_posts(subreddit, tag)
+    multiple_posts = has_multiple_posts(tag_titles)
+    manual_override = has_manual_override(manual_overrides, tag)
 
-    # TODO: Refactor into own functions
-    multiple_posts_found = len(tag_titles) > 1
-    has_manual_override = tag in list(manual_overrides.keys())
-
-    if multiple_posts_found and has_manual_override:
+    if multiple_posts and manual_override:
         logging.info(f'More than one post for #{tag}. Using manual override found in resources.')
         post_info = get_tag_info_from_overrides(manual_overrides, tag)
-    elif multiple_posts_found:
+    elif multiple_posts:
         logging.warning(
             f'More than one post found for #{tag}. Skipping. ' +
             'Please resolve manually and add to resource directory.'
@@ -64,10 +61,18 @@ def tag_info(subreddit, tag, manual_overrides={}):
             post_info = get_tag_info_from_post(tag_titles[0])
         except Exception:
             if tag in manual_overrides.keys():
-                logging.info('Unable to find post for #{tag}. Using manual override found in resources.')
+                logging.info(f'Unable to find post for #{tag}. Using manual override found in resources.')
                 post_info = get_tag_info_from_overrides(manual_overrides, tag)
 
     return post_info
+
+
+def get_tag_posts(subreddit, tag):
+    posts = subreddit.search(tag_str(tag))
+    tag_titles = [p.title for p in posts if tag_str(tag) in p.title]
+
+    return tag_titles
+
 
 
 def get_tag_info_from_post(tag_title):
@@ -101,6 +106,15 @@ def get_tag_info_from_overrides(manual_overrides, tag):
 
     return tag_info
 
+
+def has_multiple_posts(tag_titles):
+    return len(tag_titles) > 1
+
+
+def has_manual_override(manual_overrides, tag):
+    return tag in list(manual_overrides.keys())
+
+
 def combine_tags(old_tags, new_tags):
     return {**old_tags, **new_tags}
 
@@ -124,7 +138,6 @@ if __name__ == '__main__':
 
     manual_override_tags = read_manual_override_tags()
     new_tags = get_tags(start_tag, args.current_tag, subreddit, manual_override_tags)
-    # TODO: modify all_tags to read missing tags from file
     all_tags = combine_tags(current_leaderboard_tags, new_tags)
 
     updated_leaderboard = leaderboard.leaderboard(all_tags)
