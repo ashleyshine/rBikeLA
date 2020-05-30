@@ -1,6 +1,9 @@
 import json
 import logging
 import os
+import re
+
+import pprint
 
 import reddit
 import leaderboard
@@ -47,6 +50,7 @@ def tag_info(subreddit, tag, manual_overrides={}):
     n_posts = len(tag_titles)
 
     if manual_override:
+        logging.info(f'Using manual override for #{tag}.')
         post_info = get_tag_info_from_overrides(manual_overrides, tag)
     elif n_posts == 0:
         raise Exception(
@@ -77,10 +81,59 @@ def get_tag_info_from_post(tag_title):
     post = next(subreddit.search(tag_title))
     post_info = {
         'user': post.author.name,
-        'url': post.url
+        'url': post.url,
+        'location': get_location_from_post(post)
     }
 
     return post_info
+
+
+def get_location_from_post(post):
+    post_content = post.selftext.split('\n')
+    location = ''
+
+    for line in post_content:
+        if is_old_tag_line(line):
+            location = extract_location_from(line)
+            break
+
+    return location
+
+
+def is_old_tag_line(line):
+    pattern = r'old|previous|found'
+    match = re.search(pattern, line, re.IGNORECASE)
+
+    return match
+
+
+def extract_location_from(line):
+    print(line)
+    patterns_to_remove = [
+        r'(bike)?(old|previous)\s(bike)?\s?(tag(ged)?)?(post|bike|location)*\s(tag(ged)?|(found?))?\s*(\s|\-)+(\#?\d+)?',
+        r'https?\:\/\/(.*?)\)',
+        r'www\.(.*?)\)',
+        r'(location|map|google)',
+        r'#{\d}',
+        r'tag',
+        r'(old|previous|found)',
+        r'tag(ged)?'
+        r'#{\d+}',
+        r'\\',
+        r'\:',
+        r'\[',
+        r'\]',
+        r'\)',
+        r'\(',
+        r'\-'
+    ]
+
+    for pattern in patterns_to_remove:
+        line = re.sub(pattern, '', line, count=10, flags=re.IGNORECASE)
+
+    print(line)
+
+    return line.strip()
 
 
 def read_manual_override_tags():
@@ -134,8 +187,11 @@ if __name__ == '__main__':
     new_tags = get_tags(start_tag, args.current_tag, subreddit, manual_override_tags)
     all_tags = combine_tags(current_leaderboard_tags, new_tags)
 
-    updated_leaderboard = leaderboard.leaderboard(all_tags)
-    leaderboard.print_new_leaderboard(updated_leaderboard)
-    leaderboard.print_found_tags(all_tags)
+    locations = [tag_info['location'] for n, tag_info in all_tags.items() if 'location' in tag_info]
+
+    pprint.pprint(locations)
+    # updated_leaderboard = leaderboard.leaderboard(all_tags)
+    # leaderboard.print_new_leaderboard(updated_leaderboard)
+    # leaderboard.print_found_tags(all_tags)
 
     qa.print_report(all_tags, args.current_tag)
