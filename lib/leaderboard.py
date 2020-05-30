@@ -170,14 +170,11 @@ def format_leaderboard_line(rank, user, n_tags):
 def print_found_tags(tags):
     tag_numbers = sorted(tags.keys())
 
-    for n in tag_numbers:
-        print(format_found_tag_line(tags[n], n))
+    for n in tag_numbers[:-1]:
+        url = tags[n]['url']
+        found_by = tags[n+1]['user']
+        print(format_found_tag_line(n, url, found_by))
 
 
-def format_found_tag_line(tag_info, n):
-    url = tag_info['url']
-    user = tag_info['user']
-
-    line = f'- [Tag #{n}]({url}) - *found by /u/{user}*'
-
-    return line
+def format_found_tag_line(n, url, found_by):
+    return f'- [Tag #{n}]({url}) - *found by /u/{found_by}*'
