@@ -102,7 +102,7 @@ def get_location_from_post(post, tag):
 
 
 def is_old_tag_line(line):
-    pattern = r'old|previous|found'
+    pattern = r'old|previous|found|tagged'
     match = re.search(pattern, line, re.IGNORECASE)
 
     return match
@@ -112,10 +112,10 @@ def extract_location_from(line, tag):
     old_tag = tag - 1
 
     patterns_to_remove = [
-        rf'\#?{old_tag}',
-        r'((old|previous)\s)?(bike\s)?(LA\s)?((post|tag(ged)?|location)\s)?',
-        r'https?\:\/\/(.*?)\)',
-        r'www\.(.*?)\)',
+        rf'\#{old_tag}',
+        r'((old|previous)\s)?(bike\s)?((post|tag(ged)?|location)\s)?',
+        r'https?\:\/\/(.*?)(\s|\))',
+        r'www\.(.*?)(\s|\))',
         r'(location|map(ped|s)?|google)',
         r'(old|previous|found)',
         r'tag(ged)?',
@@ -127,7 +127,9 @@ def extract_location_from(line, tag):
         r'\(',
         r'\-',
         r'–',
-        r'\!'
+        r'—',
+        r'\!',
+        r'^\s*\.'
     ]
 
     for pattern in patterns_to_remove:
