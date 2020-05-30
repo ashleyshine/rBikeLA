@@ -30,11 +30,12 @@ def get_tags(start, end, subreddit, manual_overrides={}):
     """
     tags = {}
 
-    for n in range(start, end):
+    for n in range(start, end + 1):
         try:
             tags[n] = tag_info(subreddit, n, manual_overrides)
+            tags[n-1]['location'] = tags[n]['previous_location']
         except Exception as e:
-            logging.info(e)
+            logging.error(e)
 
     return tags
 
@@ -51,7 +52,7 @@ def tag_info(subreddit, tag, manual_overrides={}):
 
     if manual_override:
         logging.info(f'Using manual override for #{tag}.')
-        post_info = get_tag_info_from_overrides(manual_overrides, tag)
+        post_info = manual_overrides[tag]
     elif n_posts == 0:
         raise Exception(
             f'No posts found for #{tag}. Skipping.' +
@@ -82,7 +83,7 @@ def get_tag_info_from_post(tag_title, tag):
     post_info = {
         'user': post.author.name,
         'url': post.url,
-        'location': get_location_from_post(post, tag)
+        'previous_location': get_location_from_post(post, tag)
     }
 
     return post_info
@@ -143,18 +144,9 @@ def read_manual_override_tags():
             tag_lines = [json.loads(line) for line in f.readlines()]
 
         for tag in tag_lines:
-            tags[tag['tag']] = {'user': tag['user'], 'url': tag['url']}
+            tags[tag['tag']] = {k: v for k,v in tag.items() if k != 'tag'}
 
     return tags
-
-
-def get_tag_info_from_overrides(manual_overrides, tag):
-    tag_info = {
-        'user': manual_overrides[tag]['user'],
-        'url': manual_overrides[tag]['url']
-    }
-
-    return tag_info
 
 
 def has_manual_override(manual_overrides, tag):

@@ -16,12 +16,20 @@ def read_existing_leaderboard_tags(subreddit, phototag_wiki):
 
     for line in wiki_lines:
         tag_line = match_tag_line(line)
+
         if tag_line:
-            tag = tag_line.group(1)
+            tag = int(tag_line.group(1))
             url = tag_line.group(2)
             location = tag_line.group(4)
-            user = tag_line.group(6)
-            tags[int(tag)] = {'user': user, 'location': location, 'url': url}
+            found_by = tag_line.group(6)
+            user = tags[tag-1]['found_by'] if tag != 1 else ''
+
+            tags[tag] = {
+                'location': location,
+                'url': url,
+                'found_by': found_by,
+                'user': user
+            }
 
     return tags
 
@@ -32,7 +40,7 @@ def match_tag_line(line):
     Params:
         line: str
     """
-    pattern = r'\[Tag #(\d+)\]\((http.*)\)( - )?(.*)( - )?\*found by /u/(.*)\*'
+    pattern = r'\[Tag #(\d+)\]\((http.*)\)( - )?(.*)( - )\*found by /u/(.*)\*'
     match = re.search(pattern, line, re.IGNORECASE)
     return match
 
@@ -175,9 +183,17 @@ def print_found_tags(tags):
 
     for n in tag_numbers[:-1]:
         url = tags[n]['url']
+        location = tags[n]['location']
         found_by = tags[n+1]['user']
-        print(format_found_tag_line(n, url, found_by))
+
+        print(format_found_tag_line(n, url, location, found_by))
 
 
-def format_found_tag_line(n, url, found_by):
-    return f'- [Tag #{n}]({url}) - *found by /u/{found_by}*'
+def format_found_tag_line(n, url, location, found_by):
+    formatted_tag = f'[Tag #{n}]({url})'
+    formatted_location = f' - {location} - ' if location else ' - '
+    formatted_user = f'*found by /u/{found_by}*'
+
+    line = f'- {formatted_tag}{formatted_location}{formatted_user}'
+
+    return line
