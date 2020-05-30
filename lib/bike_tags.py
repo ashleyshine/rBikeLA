@@ -31,7 +31,7 @@ def get_tags(start, end, subreddit, manual_overrides={}):
         try:
             tags[n] = tag_info(subreddit, n, manual_overrides)
         except Exception as e:
-            logging.info(f'Unable to find tag for #{n}. Skipping.')
+            logging.info(e)
 
     return tags
 
@@ -43,26 +43,24 @@ def tag_info(subreddit, tag, manual_overrides={}):
         tag: int
     """
     tag_titles = get_tag_posts(subreddit, tag)
-    multiple_posts = has_multiple_posts(tag_titles)
     manual_override = has_manual_override(manual_overrides, tag)
+    n_posts = len(tag_titles)
 
-    if multiple_posts and manual_override:
-        logging.info(f'More than one post for #{tag}. Using manual override found in resources.')
+    if manual_override:
         post_info = get_tag_info_from_overrides(manual_overrides, tag)
-    elif multiple_posts:
-        logging.warning(
+    elif n_posts == 0:
+        raise Exception(
+            f'No posts found for #{tag}. Skipping.' +
+            'Please find post manually and add to resource directory.'
+        )
+    elif n_posts > 1:
+        raise Exception(
             f'More than one post found for #{tag}. Skipping. ' +
             'Please resolve manually and add to resource directory.' +
             '\nTag posts: {tag_titles}'
         )
-        raise Exception
     else:
-        try:
-            post_info = get_tag_info_from_post(tag_titles[0])
-        except Exception:
-            if tag in manual_overrides.keys():
-                logging.info(f'Unable to find post for #{tag}. Using manual override found in resources.')
-                post_info = get_tag_info_from_overrides(manual_overrides, tag)
+        post_info = get_tag_info_from_post(tag_titles[0])
 
     return post_info
 
@@ -107,10 +105,6 @@ def get_tag_info_from_overrides(manual_overrides, tag):
     return tag_info
 
 
-def has_multiple_posts(tag_titles):
-    return len(tag_titles) > 1
-
-
 def has_manual_override(manual_overrides, tag):
     return tag in list(manual_overrides.keys())
 
@@ -141,7 +135,7 @@ if __name__ == '__main__':
     all_tags = combine_tags(current_leaderboard_tags, new_tags)
 
     updated_leaderboard = leaderboard.leaderboard(all_tags)
-    leaderboard.print_new_leaderboard(updated_leaderboard, 15)
+    leaderboard.print_new_leaderboard(updated_leaderboard)
     leaderboard.print_found_tags(all_tags)
 
     qa.print_report(all_tags, args.current_tag)
