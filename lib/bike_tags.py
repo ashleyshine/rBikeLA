@@ -142,7 +142,6 @@ if __name__ == '__main__':
 
     updated_leaderboard = leaderboard.leaderboard(all_tags)
     leaderboard.print_new_leaderboard(updated_leaderboard, 15)
-
-    # TODO: print found tags list
+    leaderboard.print_found_tags(all_tags)
 
     qa.print_report(all_tags, args.current_tag)

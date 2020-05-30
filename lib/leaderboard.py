@@ -31,7 +31,7 @@ def match_tag_line(line):
     Params:
         line: str
     """
-    return re.search(r'\[Tag #(\d+)\](\(http.*\)).*found by /u/(.*)', line)
+    return re.search(r'\[Tag #(\d+)\]\((http.*)\).*found by /u/(.*)', line)
 
 
 def leaderboard(tags):
@@ -164,4 +164,20 @@ def print_new_leaderboard(leaderboard, top_n=10):
 
 
 def format_leaderboard_line(rank, user, n_tags):
-    return f'{rank + 1}) /u/{user} {n_tags}'
+    return f'{rank + 1}) /u/{user} {n_tags} tags'
+
+
+def print_found_tags(tags):
+    tag_numbers = sorted(tags.keys())
+
+    for n in tag_numbers:
+        print(format_found_tag_line(tags[n], n))
+
+
+def format_found_tag_line(tag_info, n):
+    url = tag_info['url']
+    user = tag_info['user']
+
+    line = f'- [Tag #{n}]({url}) - *found by /u/{user}*'
+
+    return line
