@@ -19,8 +19,9 @@ def read_existing_leaderboard_tags(subreddit, phototag_wiki):
         if tag_line:
             tag = tag_line.group(1)
             url = tag_line.group(2)
-            user = tag_line.group(3)
-            tags[int(tag)] = {'user': user.strip('*\r'), 'url': url}
+            location = tag_line.group(4)
+            user = tag_line.group(6)
+            tags[int(tag)] = {'user': user, 'location': location, 'url': url}
 
     return tags
 
@@ -31,7 +32,9 @@ def match_tag_line(line):
     Params:
         line: str
     """
-    return re.search(r'\[Tag #(\d+)\]\((http.*)\).*found by /u/(.*)', line)
+    pattern = r'\[Tag #(\d+)\]\((http.*)\)( - )?(.*)( - )?\*found by /u/(.*)\*'
+    match = re.search(pattern, line, re.IGNORECASE)
+    return match
 
 
 def leaderboard(tags):

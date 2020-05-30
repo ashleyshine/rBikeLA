@@ -186,13 +186,9 @@ if __name__ == '__main__':
     new_tags = get_tags(start_tag, args.current_tag, subreddit, manual_override_tags)
     all_tags = combine_tags(current_leaderboard_tags, new_tags)
 
-    locations = [tag_info['location'] for n, tag_info in all_tags.items() if 'location' in tag_info]
+    updated_leaderboard = leaderboard.leaderboard(all_tags)
+    leaderboard.print_new_leaderboard(updated_leaderboard)
+    leaderboard.print_found_tags(all_tags)
 
-    pprint.pprint(locations)
-    # updated_leaderboard = leaderboard.leaderboard(all_tags)
-    # leaderboard.print_new_leaderboard(updated_leaderboard)
-    # leaderboard.print_found_tags(all_tags)
+    qa.print_report(all_tags, args.current_tag)
 
-    # qa.print_report(all_tags, args.current_tag)
-
-    # TODO: extract locations from leaderboard
