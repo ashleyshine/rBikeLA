@@ -64,7 +64,7 @@ def tag_info(subreddit, tag, manual_overrides={}):
             '\nTag posts: {tag_titles}'
         )
     else:
-        post_info = get_tag_info_from_post(tag_titles[0])
+        post_info = get_tag_info_from_post(tag_titles[0], tag)
 
     return post_info
 
@@ -77,24 +77,24 @@ def get_tag_posts(subreddit, tag):
 
 
 
-def get_tag_info_from_post(tag_title):
+def get_tag_info_from_post(tag_title, tag):
     post = next(subreddit.search(tag_title))
     post_info = {
         'user': post.author.name,
         'url': post.url,
-        'location': get_location_from_post(post)
+        'location': get_location_from_post(post, tag)
     }
 
     return post_info
 
 
-def get_location_from_post(post):
+def get_location_from_post(post, tag):
     post_content = post.selftext.split('\n')
     location = ''
 
     for line in post_content:
         if is_old_tag_line(line):
-            location = extract_location_from(line)
+            location = extract_location_from(line, tag)
             break
 
     return location
@@ -107,31 +107,30 @@ def is_old_tag_line(line):
     return match
 
 
-def extract_location_from(line):
-    print(line)
+def extract_location_from(line, tag):
+    old_tag = tag - 1
+
     patterns_to_remove = [
-        r'(bike)?(old|previous)\s(bike)?\s?(tag(ged)?)?(post|bike|location)*\s(tag(ged)?|(found?))?\s*(\s|\-)+(\#?\d+)?',
+        rf'\#?{old_tag}',
+        r'((old|previous)\s)?(bike\s)?(LA\s)?((post|tag(ged)?|location)\s)?',
         r'https?\:\/\/(.*?)\)',
         r'www\.(.*?)\)',
-        r'(location|map|google)',
-        r'#{\d}',
-        r'tag',
+        r'(location|map(ped|s)?|google)',
         r'(old|previous|found)',
-        r'tag(ged)?'
-        r'#{\d+}',
+        r'tag(ged)?',
         r'\\',
         r'\:',
         r'\[',
         r'\]',
         r'\)',
         r'\(',
-        r'\-'
+        r'\-',
+        r'–',
+        r'\!'
     ]
 
     for pattern in patterns_to_remove:
-        line = re.sub(pattern, '', line, count=10, flags=re.IGNORECASE)
-
-    print(line)
+        line = re.sub(pattern, '', line, flags=re.IGNORECASE)
 
     return line.strip()
 
@@ -194,4 +193,6 @@ if __name__ == '__main__':
     # leaderboard.print_new_leaderboard(updated_leaderboard)
     # leaderboard.print_found_tags(all_tags)
 
-    qa.print_report(all_tags, args.current_tag)
+    # qa.print_report(all_tags, args.current_tag)
+
+    # TODO: extract locations from leaderboard
