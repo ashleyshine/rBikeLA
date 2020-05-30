@@ -52,9 +52,9 @@ def tag_info(subreddit, tag, manual_overrides={}):
     elif multiple_posts:
         logging.warning(
             f'More than one post found for #{tag}. Skipping. ' +
-            'Please resolve manually and add to resource directory.'
+            'Please resolve manually and add to resource directory.' +
+            '\nTag posts: {tag_titles}'
         )
-        logging.warning(f'Tag posts: {tag_titles}')
         raise Exception
     else:
         try:
@@ -79,7 +79,7 @@ def get_tag_info_from_post(tag_title):
     post = next(subreddit.search(tag_title))
     post_info = {
         'user': post.author.name,
-        'url': post.permalink
+        'url': post.url
     }
 
     return post_info
