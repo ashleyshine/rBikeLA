@@ -3,21 +3,7 @@ import logging
 import os
 import re
 
-import pprint
-
-import reddit
-import leaderboard
-import parser
-import qa
-
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
-
-
-SUBREDDIT = 'bikeLA'
-PHOTOTAG_WIKI = 'phototag'
-RESOURCE_DIR = './resources'
-OVERRIDE_FILES = ['conflicting_tags.json', 'missing_tags.json']
-DEFAULT_START_TAG = 1
 
 
 def get_tags(start, end, subreddit, manual_overrides={}):
@@ -42,11 +28,12 @@ def get_tags(start, end, subreddit, manual_overrides={}):
 
 def tag_info(subreddit, tag, manual_overrides={}):
     """Return info for a tag number.
+
     Params:
         subreddit: praw Subreddit instance
         tag: int
     """
-    tag_titles = get_tag_posts(subreddit, tag)
+    tag_titles = get_tag_post_titles(subreddit, tag)
     manual_override = has_manual_override(manual_overrides, tag)
     n_posts = len(tag_titles)
 
@@ -65,20 +52,31 @@ def tag_info(subreddit, tag, manual_overrides={}):
             '\nTag posts: {tag_titles}'
         )
     else:
-        post_info = get_tag_info_from_post(tag_titles[0], tag)
+        post_info = get_tag_info_from_post(subreddit, tag_titles[0], tag)
 
     return post_info
 
 
-def get_tag_posts(subreddit, tag):
+def get_tag_post_titles(subreddit, tag):
+    """Return title of posts that contain the tag number in the title (list).
+
+    Params:
+        subreddit: praw Subreddit instance
+        tag: int
+    """
     posts = subreddit.search(tag_str(tag))
     tag_titles = [p.title for p in posts if tag_str(tag) in p.title]
 
     return tag_titles
 
 
+def get_tag_info_from_post(subreddit, tag_title, tag):
+    """Return tag info from a given post.
 
-def get_tag_info_from_post(tag_title, tag):
+    Params:
+        tag_title: str
+        tag: int
+    """
     post = next(subreddit.search(tag_title))
     post_info = {
         'user': post.author.name,
@@ -90,6 +88,12 @@ def get_tag_info_from_post(tag_title, tag):
 
 
 def get_location_from_post(post, tag):
+    """Return location of previous tag tagged in post.
+
+    Params:
+        post: praw Submission instance
+        tag: int
+    """
     post_content = post.selftext.split('\n')
     location = ''
 
@@ -102,6 +106,11 @@ def get_location_from_post(post, tag):
 
 
 def is_old_tag_line(line):
+    """Return True if the line contains the found tag.
+
+    Params:
+        line: str
+    """
     pattern = r'old|previous|found|tagged'
     match = re.search(pattern, line, re.IGNORECASE)
 
@@ -109,6 +118,12 @@ def is_old_tag_line(line):
 
 
 def extract_location_from(line, tag):
+    """Return location (str) extracted from the given line.
+
+    Params:
+        line: line from post with previous tag (str)
+        tag: current tag (str)
+    """
     old_tag = tag - 1
 
     patterns_to_remove = [
@@ -138,15 +153,15 @@ def extract_location_from(line, tag):
     return line.strip()
 
 
-def read_manual_override_tags():
+def read_manual_override_tags(resource_dir, override_files):
     tags = {}
 
-    for file in OVERRIDE_FILES:
-        with open(os.path.join(RESOURCE_DIR, file)) as f:
+    for file in override_files:
+        with open(os.path.join(resource_dir, file)) as f:
             tag_lines = [json.loads(line) for line in f.readlines()]
 
         for tag in tag_lines:
-            tags[tag['tag']] = {k: v for k,v in tag.items() if k != 'tag'}
+            tags[tag['tag']] = {k: v for k, v in tag.items() if k != 'tag'}
 
     return tags
 
@@ -161,29 +176,3 @@ def combine_tags(old_tags, new_tags):
 
 def tag_str(num):
     return f'#{num}'
-
-
-if __name__ == '__main__':
-    parser = parser.parser()
-    args = parser.parse_args()
-
-    subreddit = reddit.get_subreddit(SUBREDDIT)
-
-    if args.use_wiki:
-        current_leaderboard_tags = leaderboard.read_existing_leaderboard_tags(subreddit, PHOTOTAG_WIKI)
-        start_tag = leaderboard.last_leaderboard_tag(current_leaderboard_tags)
-    else:
-        current_leaderboard_tags = {}
-        start_tag = DEFAULT_START_TAG
-
-    manual_override_tags = read_manual_override_tags()
-    new_tags = get_tags(start_tag, args.current_tag, subreddit, manual_override_tags)
-    all_tags = combine_tags(current_leaderboard_tags, new_tags)
-
-    updated_leaderboard = leaderboard.leaderboard(all_tags)
-    leaderboard.print_new_leaderboard(updated_leaderboard, args.n_leaderboard)
-    leaderboard.print_found_tags(all_tags)
-
-    if args.qa:
-        qa.print_report(all_tags, args.current_tag)
-

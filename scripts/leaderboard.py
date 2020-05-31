@@ -181,6 +181,11 @@ def format_leaderboard_line(rank, user, n_tags):
 
 
 def print_found_tags(tags):
+    """Print list of found tags.
+
+    Params:
+        tags: dict
+    """
     tag_numbers = sorted(tags.keys())
 
     print('\n# Found tags!\n')

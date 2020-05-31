@@ -28,8 +28,7 @@ def reddit_client(config):
 
 
 def get_subreddit(subreddit):
-    """Return praw Subreddit instance
-    """
+    """Return praw Subreddit instance."""
     client_config = get_client_credentials()
     reddit = reddit_client(client_config)
     subreddit = reddit.subreddit(subreddit)
