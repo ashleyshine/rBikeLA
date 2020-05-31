@@ -29,6 +29,7 @@ In order to interface with reddit using its [API](https://www.reddit.com/dev/api
 Once you've created an app, create a `config/` directory and add your client ID, client secret, and user agent (reddit username) in JSON format to a file called `client` in the directory.
 ```
 mkdir config
+cd config
 touch client
 ```
 The contents of the `client` file should look like:
