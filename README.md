@@ -69,20 +69,23 @@ Example output:
 ```
 # TAG LEADERBOARD
 
-1) /u/nigelst 52 tags
-2) /u/Howardval 25 tags
-3) /u/havetocrow 15 tags
-3) /u/cardina16 15 tags
-4) /u/flacoloco 14 tags
-4) /u/chicago_orgullo 14 tags
-4) /u/NeptuNeo 14 tags
-5) /u/takeasecond 12 tags
-6) /u/Voltairian3 11 tags
-7) /u/sdkfhjs 10 tags
-7) /u/bergam0t 10 tags
-8) /u/soswat 9 tags
-9) /u/Jesuspeaksfrench 8 tags
-10) /u/dima55 7 tags
+Rank | User| Tags
+---|---|---
+1 | /u/nigelst | 52
+2 | /u/Howardval | 25
+3 | /u/havetocrow | 15
+3 | /u/cardina16 | 15
+4 | /u/flacoloco | 14
+4 | /u/chicago_orgullo | 14
+4 | /u/NeptuNeo | 14
+5 | /u/takeasecond | 12
+6 | /u/Voltairian3 | 11
+7 | /u/sdkfhjs | 10
+7 | /u/bergam0t | 10
+8 | /u/soswat | 9
+9 | /u/Jesuspeaksfrench | 8
+10 | /u/dima55 | 7
+10 | /u/coonster | 7
 
 # Found tags!
 

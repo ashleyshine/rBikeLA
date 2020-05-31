@@ -163,6 +163,8 @@ def print_new_leaderboard(leaderboard, top_n):
     sorted_leaderboard = sort_leaderboard(leaderboard)
 
     print('# TAG LEADERBOARD\n')
+    print('Rank | User| Tags')
+    print('---|---|---')
 
     while rank < top_n + 1 and nth_user < len(sorted_leaderboard):
         user, n_tags = list(sorted_leaderboard[nth_user].items())[0]
@@ -178,7 +180,7 @@ def print_new_leaderboard(leaderboard, top_n):
 
 
 def format_leaderboard_line(rank, user, n_tags):
-    return f'{rank}. /u/{user} {n_tags} tags\n'
+    return f'{rank} | /u/{user} | {n_tags}'
 
 
 def print_found_tags(tags):
