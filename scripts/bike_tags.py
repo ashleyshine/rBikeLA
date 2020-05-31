@@ -21,7 +21,7 @@ def get_tags(start, end, subreddit, manual_overrides={}):
             tags[n] = tag_info(subreddit, n, manual_overrides)
             tags[n-1]['location'] = tags[n]['previous_location']
         except Exception as e:
-            logging.error(e)
+            logging.warning(e)
 
     return tags
 
@@ -49,7 +49,7 @@ def tag_info(subreddit, tag, manual_overrides={}):
         raise Exception(
             f'More than one post found for #{tag}. Skipping. ' +
             'Please resolve manually and add to resource directory.' +
-            '\nTag posts: {tag_titles}'
+            f'\nTag posts: {tag_titles}'
         )
     else:
         post_info = get_tag_info_from_post(subreddit, tag_titles[0], tag)
