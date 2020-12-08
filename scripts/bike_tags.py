@@ -64,10 +64,23 @@ def get_tag_post_titles(subreddit, tag):
         subreddit: praw Subreddit instance
         tag: int
     """
-    posts = subreddit.search(tag_str(tag))
-    tag_titles = [p.title for p in posts if tag_str(tag) in p.title]
+    strict_tag_pattern = f'bike tag #{tag}'
+    tag_pattern = f'bike tag {tag}'
+    num_pattern = f'#{tag}'
 
-    return tag_titles
+    strict_tag_posts = subreddit.search(strict_tag_pattern, re.IGNORECASE)
+    strict_tag_titles = [p.title for p in strict_tag_posts if strict_tag_pattern.lower() in p.title.lower()]
+    if strict_tag_titles:
+        return strict_tag_titles
+
+    tag_posts = subreddit.search(tag_pattern, re.IGNORECASE)
+    tag_titles = [p.title for p in tag_posts if tag_pattern.lower() in p.title.lower()]
+    if tag_titles:
+        return tag_titles
+
+    num_posts = subreddit.search(num_pattern, re.IGNORECASE)
+    num_titles = [p.title for p in num_posts if num_pattern in p.title]
+    return num_titles
 
 
 def get_tag_info_from_post(subreddit, tag_title, tag):
@@ -172,7 +185,3 @@ def has_manual_override(manual_overrides, tag):
 
 def combine_tags(old_tags, new_tags):
     return {**old_tags, **new_tags}
-
-
-def tag_str(num):
-    return f'#{num}'
