@@ -68,8 +68,14 @@ def get_tag_post_titles(subreddit, tag):
     tag_pattern = f'bike tag {tag}'
     num_pattern = f'#{tag}'
 
+    strict_tag_pattern_regex = fr'bike tag #\s*{tag}'
+    num_pattern_regex = fr'#\s*{tag}'
+
     strict_tag_posts = subreddit.search(strict_tag_pattern, re.IGNORECASE)
-    strict_tag_titles = [p.title for p in strict_tag_posts if strict_tag_pattern.lower() in p.title.lower()]
+    strict_tag_titles = [
+        p.title for p in strict_tag_posts
+        if re.search(strict_tag_pattern_regex, p.title, re.IGNORECASE)
+    ]
     if strict_tag_titles:
         return strict_tag_titles
 
@@ -79,7 +85,7 @@ def get_tag_post_titles(subreddit, tag):
         return tag_titles
 
     num_posts = subreddit.search(num_pattern, re.IGNORECASE)
-    num_titles = [p.title for p in num_posts if num_pattern in p.title]
+    num_titles = [p.title for p in num_posts if re.search(num_pattern_regex, p.title, re.IGNORECASE)]
     return num_titles
 
 
