@@ -72,34 +72,32 @@ Example output:
 
 Rank | User| Tags
 ---|---|---
-1 | /u/nigelst | 52
-2 | /u/Howardval | 25
-3 | /u/havetocrow | 15
-3 | /u/cardina16 | 15
-4 | /u/flacoloco | 14
-4 | /u/chicago_orgullo | 14
-4 | /u/NeptuNeo | 14
-5 | /u/takeasecond | 12
-6 | /u/Voltairian3 | 11
-7 | /u/sdkfhjs | 10
-7 | /u/bergam0t | 10
-8 | /u/soswat | 9
-9 | /u/Jesuspeaksfrench | 8
-10 | /u/dima55 | 7
-10 | /u/coonster | 7
+1 | /u/nigelst | 55
+2 | /u/sdkfhjs | 31
+3 | /u/havetocrow | 29
+4 | /u/tangyline | 27
+5 | /u/Howardval | 25
+5 | /u/faihube | 25
+6 | /u/Wu_Tang_In_a_Pouch | 23
+7 | /u/Not_that_easy | 22
+8 | /u/chicago_orgullo | 20
+9 | /u/takeasecond | 19
+10 | /u/coonster | 18
 
 # Found tags!
 
-- [Tag #1](http://redd.it/1wshy7) - Koreatown - *found by /u/PizCzar*
-- [Tag #2](http://redd.it/1x4yks) - FIDM Downtown - *found by /u/Regret_Nothing*
-- [Tag #3](http://redd.it/251t17) - Culver City - *found by /u/Crayz9000*
-- [Tag #4](http://redd.it/254u8a) - Venice/Fairfax - *found by /u/underscore*
-- [Tag #5](http://redd.it/25f0z4) - Santa Monica City Hall - *found by /u/nigelst*
-- [Tag #6](http://redd.it/29c998) - Mulholland Drive Scenic Overlook - *found by /u/somEthingElsEEntirlE*
-- [Tag #7](http://redd.it/29e427) - Universal Studios at Lankershim - *found by /u/SwedishChef727*
-- [Tag #8](http://redd.it/29faik) - Iliad Book Shop Cahuenga and Chandler - *found by /u/Crayz9000*
-- [Tag #9](http://redd.it/29ja1r) - Canter's Deli on Fairfax - *found by /u/somEthingElsEEntirlE*
-- [Tag #10](http://redd.it/29sgie) - MacArthur Park Lake - *found by /u/nigelst*
+| Tag | Location | GPS | Found By |
+| --- | --- | --- | --- |
+| [#1](https://www.reddit.com/r/BikeLA/comments/1wshy7/photo_tag_adapting_from_rbikingatx/) | Koreatown | (34.06119, -118.307197) | /u/PizCzar* |
+| [#2](https://www.reddit.com/r/BikeLA/comments/1x4yks/photo_tag_2/) | FIDM Downtown | (34.04406, -118.25976) | /u/Regret_Nothing* |
+| [#3](https://www.reddit.com/r/BikeLA/comments/251t17/bike_tag_3/) | Culver City | (34.030418, -118.372549) | /u/Crayz9000* |
+| [#4](https://www.reddit.com/r/BikeLA/comments/254u8a/bike_tag_4/) | Venice/Fairfax | (34.039183, -118.370637) | /u/underscore* |
+| [#5](https://www.reddit.com/r/BikeLA/comments/25f0z4/bike_tag_5/) | Santa Monica City Hall | (34.011638, -118.491688) | /u/nigelst* |
+| [#6](https://www.reddit.com/r/BikeLA/comments/29c998/bike_tag_6/) | Mulholland Drive Scenic Overlook | (34.131533, -118.433612) | /u/somEthingElsEEntirlE* |
+| [#7](https://www.reddit.com/r/BikeLA/comments/29e427/bike_tag_7/) | Universal Studios at Lankershim | (34.138875, -118.362376) | /u/SwedishChef727* |
+| [#8](https://www.reddit.com/r/BikeLA/comments/29faik/bike_tag_8/) | Iliad Book Shop Cahuenga and Chandler | (34.168645, -118.361667) | /u/Crayz9000* |
+| [#9](https://www.reddit.com/r/BikeLA/comments/29ja1r/bike_tag_9/) | Canter's Deli on Fairfax | (34.078985, -118.361368) | /u/somEthingElsEEntirlE* |
+| [#10](https://www.reddit.com/r/BikeLA/comments/29sgie/bike_tag_10/) | MacArthur Park Lake | (34.058184, -118.279101) | /u/nigelst* |
 ```
 It will also print a QA report, which can be used to check for missing tags.
 ```
