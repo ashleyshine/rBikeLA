@@ -27,7 +27,7 @@ def read_existing_leaderboard_tags(subreddit, phototag_wiki):
             deleted = tag_line.group(7)
             found_by = username if username else deleted
 
-            user = tags[rank-1]['found_by'] if rank != 1 else ''
+            user = tags[rank-1]['found_by'] if rank-1 in tags else ''
 
             tags[rank] = {
                 'location': location,
