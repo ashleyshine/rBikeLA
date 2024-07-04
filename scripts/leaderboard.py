@@ -212,7 +212,7 @@ def print_found_tags(tags):
 
 def format_found_tag_line(n, url, location, lat_lon, found_by):
     formatted_tag = f'[#{n}]({url})'
-    formatted_user = f'/u/{found_by}*'
+    formatted_user = f'*/u/{found_by}*'
 
     line = f'| {formatted_tag} | {location} | {lat_lon} | {formatted_user} |'
 
