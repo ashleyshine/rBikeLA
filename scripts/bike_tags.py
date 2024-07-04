@@ -42,7 +42,7 @@ def tag_info(subreddit, tag, manual_overrides={}):
         post_info = manual_overrides[tag]
     elif n_posts == 0:
         raise Exception(
-            f'No posts found for #{tag}. Skipping.' +
+            f'No posts found for #{tag}. Skipping. ' +
             'Please find post manually and add to resource directory.'
         )
     elif n_posts > 1:

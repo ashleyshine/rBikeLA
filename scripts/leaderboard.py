@@ -204,7 +204,7 @@ def print_found_tags(tags):
     for n in tag_numbers[:-1]:
         url = tags[n]['url']
         location = tags[n]['location']
-        lan_lon = tags[n]['lat_lon']
+        lat_lon = tags[n]['lat_lon'] if 'lat_lon' in tags[n] else ''
         found_by = tags[n+1]['user']
 
         print(format_found_tag_line(n, url, location, lat_lon, found_by))
